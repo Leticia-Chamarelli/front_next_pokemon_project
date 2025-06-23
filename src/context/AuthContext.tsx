@@ -8,6 +8,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (accessToken: string, refreshToken: string) => void;
   logout: () => void;
+  registerUser: (username: string, password: string) => Promise<void>;
+  loginUser: (username: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -40,6 +42,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("refreshToken");
   };
 
+  const registerUser = async (username: string, password: string) => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Registration failed");
+    }
+  };
+
+  const loginUser = async (username: string, password: string) => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Login failed");
+    }
+
+    const data = await res.json();
+
+    login(data.accessToken, data.refreshToken);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -48,6 +78,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isAuthenticated: !!accessToken,
         login,
         logout,
+        registerUser,
+        loginUser,
       }}
     >
       {children}
