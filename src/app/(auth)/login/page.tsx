@@ -3,15 +3,43 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  function handleSubmit(event: React.FormEvent) {
+  const { login } = useAuth();
+
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    // por enquanto só um alert para testar
-    alert(`Username: ${username}\nPassword: ${password}`);
+    setError("");
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Login failed");
+      }
+
+      const data = await response.json();
+
+      login(data.access_token, data.refresh_token);
+
+      alert("Login successful!");
+      // window.location.href = "/dashboard"; // se quiser redirecionar após login
+
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    }
   }
 
   return (
@@ -19,28 +47,35 @@ export default function LoginPage() {
       <h1 className="text-2xl font-bold mb-6 text-center">Login</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="username" className="block mb-1 font-semibold">Username</label>
+          <label htmlFor="username" className="block mb-1 font-semibold">
+            Username
+          </label>
           <Input
             id="username"
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
             required
             placeholder="your username"
           />
         </div>
         <div>
-          <label htmlFor="password" className="block mb-1 font-semibold">Password</label>
+          <label htmlFor="password" className="block mb-1 font-semibold">
+            Password
+          </label>
           <Input
             id="password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             required
             placeholder="********"
           />
         </div>
-        <Button type="submit" className="w-full">Login</Button>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
       </form>
     </main>
   );
