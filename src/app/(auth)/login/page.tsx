@@ -35,7 +35,6 @@ export default function LoginPage() {
       login(data.access_token, data.refresh_token);
 
       alert("Login successful!");
-      // window.location.href = "/dashboard"; // se quiser redirecionar após login
 
     } catch (err: any) {
       setError(err.message || "Something went wrong");
