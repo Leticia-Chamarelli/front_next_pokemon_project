@@ -1,4 +1,8 @@
+"use client";
+
 export default function Home() {
+  console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
   return (
     <section className="space-y-4">
       <h1 className="text-2xl font-bold text-blue-600">Welcome to the Pokémon App!</h1>
