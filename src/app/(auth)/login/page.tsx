@@ -1,41 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const { loginUser } = useAuth();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  const { login } = useAuth();
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError("");
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Login failed");
-      }
-
-      const data = await response.json();
-
-      login(data.access_token, data.refresh_token);
-
+      await loginUser(username, password);
       alert("Login successful!");
-
+      router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
     }
