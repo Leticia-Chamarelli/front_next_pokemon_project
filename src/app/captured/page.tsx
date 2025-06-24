@@ -7,7 +7,7 @@ import { CreateCapturedForm } from "@/components/pokemon/captured/CreateCaptured
 interface CapturedPokemon {
   id: number;
   pokemonId: number;
-  region: string; // mudou de location para region
+  region: string; 
   capturedAt: string;
 }
 
@@ -22,7 +22,12 @@ export default function CapturedPage() {
   const [error, setError] = useState("");
 
   async function fetchCaptures() {
-    if (!accessToken) return;
+    if (!accessToken) {
+      console.warn("Access token is missing!");
+      setError("User not authenticated.");
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     setError("");

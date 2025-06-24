@@ -50,6 +50,7 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
     setMessage("");
 
     try {
+        console.log("Sending capture with token:", accessToken);
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/captured`, {
         method: "POST",
         headers: {
