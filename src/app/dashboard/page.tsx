@@ -13,11 +13,13 @@ export default function DashboardPage() {
 
         {loading && <p>Loading profile...</p>}
         {error && <p className="text-red-600">{error}</p>}
-        {user && (
+        {user ? (
           <div className="text-gray-700 space-y-2">
             <p><strong>ID:</strong> {user.id}</p>
             <p><strong>Username:</strong> {user.username}</p>
           </div>
+        ) : (
+          !loading && !error && <p>No user data found.</p>
         )}
       </main>
     </PrivateRoute>
