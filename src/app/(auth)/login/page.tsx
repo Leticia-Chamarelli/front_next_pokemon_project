@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -61,6 +63,12 @@ export default function LoginPage() {
         <Button type="submit" className="w-full">
           Login
         </Button>
+        <p className="text-sm mt-4 text-center">
+          Don’t have an account?{" "}
+          <Link href="/register" className="text-blue-600 hover:underline">
+            Register
+          </Link>
+        </p>
       </form>
     </main>
   );
