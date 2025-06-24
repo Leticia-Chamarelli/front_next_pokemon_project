@@ -21,7 +21,7 @@ export default function SightedPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔁 Função externa para ser reutilizada (com formulário)
+
   async function fetchSightings() {
     if (!accessToken) return;
 
