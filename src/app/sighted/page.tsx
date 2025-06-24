@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { CreateSightedForm } from "@/components/pokemon/sighted/CreateSightedForm";
 
 interface SightedPokemon {
   id: number;
@@ -20,68 +21,70 @@ export default function SightedPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  // 🔁 Função externa para ser reutilizada (com formulário)
+  async function fetchSightings() {
+    if (!accessToken) return;
+
     console.log("API URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
     console.log("Access Token:", accessToken);
 
-    async function fetchSightings() {
-      if (!accessToken) return;
-
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/sightings`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-
-        console.log("Response status:", res.status);
-        const text = await res.text();
-        console.log("Response text:", text);
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch sightings");
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/sightings`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
+      );
 
+      console.log("Response status:", res.status);
+      const text = await res.text();
+      console.log("Response text:", text);
 
-        const data: SightedPokemon[] = JSON.parse(text);
-
-
-        const extendedData: ExtendedSightedPokemon[] = await Promise.all(
-          data.map(async (s) => {
-            try {
-              const pokeRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${s.pokemonId}`);
-              const pokeData = await pokeRes.json();
-              return {
-                ...s,
-                pokemonName: pokeData.name,
-              };
-            } catch {
-              return {
-                ...s,
-                pokemonName: "unknown",
-              };
-            }
-          })
-        );
-
-        setSightings(extendedData);
-      } catch (err: any) {
-        console.error("Fetch error:", err);
-        setError(err.message || "Something went wrong");
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        throw new Error("Failed to fetch sightings");
       }
-    }
 
+      const data: SightedPokemon[] = JSON.parse(text);
+
+      const extendedData: ExtendedSightedPokemon[] = await Promise.all(
+        data.map(async (s) => {
+          try {
+            const pokeRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${s.pokemonId}`);
+            const pokeData = await pokeRes.json();
+            return {
+              ...s,
+              pokemonName: pokeData.name,
+            };
+          } catch {
+            return {
+              ...s,
+              pokemonName: "unknown",
+            };
+          }
+        })
+      );
+
+      setSightings(extendedData);
+    } catch (err: any) {
+      console.error("Fetch error:", err);
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
     fetchSightings();
   }, [accessToken]);
 
   return (
     <main className="max-w-4xl mx-auto mt-10 px-4">
       <h1 className="text-2xl font-bold mb-4 text-blue-600">Pokémon Sightings</h1>
+
+      {/* 🆕 Formulário de criação */}
+      <CreateSightedForm onCreated={fetchSightings} />
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
