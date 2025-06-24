@@ -14,6 +14,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://back-nest-pokemon-project.onrender.com";
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(() => {
     if (typeof window !== "undefined") {
@@ -44,7 +46,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const registerUser = async (username: string, password: string) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+    const res = await fetch(`${API_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
@@ -56,7 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const loginUser = async (username: string, password: string) => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
