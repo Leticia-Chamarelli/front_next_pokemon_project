@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 interface AuthContextType {
   accessToken: string | null;
@@ -15,18 +15,19 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    const storedAccess = localStorage.getItem("accessToken");
-    const storedRefresh = localStorage.getItem("refreshToken");
-
-    if (storedAccess && storedRefresh) {
-      setAccessToken(storedAccess);
-      setRefreshToken(storedRefresh);
+  const [accessToken, setAccessToken] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("accessToken");
     }
-  }, []);
+    return null;
+  });
+
+  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("refreshToken");
+    }
+    return null;
+  });
 
   const login = (newAccess: string, newRefresh: string) => {
     setAccessToken(newAccess);
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const data = await res.json();
 
-    login(data.accessToken, data.refreshToken);
+    login(data.access_token, data.refresh_token);
   };
 
   return (

@@ -10,7 +10,7 @@ export function LogoutButton() {
 
   function handleLogout() {
     logout();
-    router.push("/(auth)/login"); // redireciona para login após logout
+    router.push("/(auth)/login"); 
   }
 
   return (
