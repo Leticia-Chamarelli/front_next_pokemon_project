@@ -1,12 +1,19 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
+interface User {
+  id: number;
+  username: string;
+}
 
 interface AuthContextType {
+  user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
   isAuthenticated: boolean;
-  login: (accessToken: string, refreshToken: string) => void;
+  mounted: boolean;
+  login: (accessToken: string, refreshToken: string, user: User) => void;
   logout: () => void;
   registerUser: (username: string, password: string) => Promise<void>;
   loginUser: (username: string, password: string) => Promise<void>;
@@ -17,32 +24,49 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://back-nest-pokemon-project.onrender.com";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [accessToken, setAccessToken] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("accessToken");
-    }
-    return null;
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
-  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("refreshToken");
-    }
-    return null;
-  });
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedAccess = localStorage.getItem("accessToken");
+    const storedRefresh = localStorage.getItem("refreshToken");
 
-  const login = (newAccess: string, newRefresh: string) => {
+    if (storedAccess && storedRefresh) {
+      setAccessToken(storedAccess);
+      setRefreshToken(storedRefresh);
+    }
+
+    try {
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (error) {
+      console.warn("⚠️ Failed to parse stored user:", error);
+      localStorage.removeItem("user");
+    }
+
+    setMounted(true);
+  }, []);
+
+  const login = (newAccess: string, newRefresh: string, userData: User) => {
     setAccessToken(newAccess);
     setRefreshToken(newRefresh);
+    setUser(userData);
     localStorage.setItem("accessToken", newAccess);
     localStorage.setItem("refreshToken", newRefresh);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const logout = () => {
     setAccessToken(null);
     setRefreshToken(null);
+    setUser(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("user");
   };
 
   const registerUser = async (username: string, password: string) => {
@@ -69,16 +93,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     const data = await res.json();
-
-    login(data.access_token, data.refresh_token);
+    login(data.access_token, data.refresh_token, data.user);
   };
 
   return (
     <AuthContext.Provider
       value={{
+        user,
         accessToken,
         refreshToken,
         isAuthenticated: !!accessToken,
+        mounted,
         login,
         logout,
         registerUser,

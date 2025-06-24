@@ -25,8 +25,8 @@ export function useProfile() {
           throw new Error("Failed to fetch profile");
         }
 
-        const data: User = await res.json();
-        setUser(data);
+        const json = await res.json();
+        setUser(json.user);
       } catch (err: any) {
         setError(err.message);
       } finally {
