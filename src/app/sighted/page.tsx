@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { CreateSightedForm } from "@/components/pokemon/sighted/CreateSightedForm";
 
 interface SightedPokemon {
   id: number;
@@ -21,12 +20,15 @@ export default function SightedPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-
   async function fetchSightings() {
-    if (!accessToken) return;
+    if (!accessToken) {
+      setError("User not authenticated.");
+      setLoading(false);
+      return;
+    }
 
-    console.log("API URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
-    console.log("Access Token:", accessToken);
+    setLoading(true);
+    setError("");
 
     try {
       const res = await fetch(
@@ -38,15 +40,13 @@ export default function SightedPage() {
         }
       );
 
-      console.log("Response status:", res.status);
-      const text = await res.text();
-      console.log("Response text:", text);
-
       if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Error response:", errorText);
         throw new Error("Failed to fetch sightings");
       }
 
-      const data: SightedPokemon[] = JSON.parse(text);
+      const data: SightedPokemon[] = await res.json();
 
       const extendedData: ExtendedSightedPokemon[] = await Promise.all(
         data.map(async (s) => {
@@ -82,9 +82,6 @@ export default function SightedPage() {
   return (
     <main className="max-w-4xl mx-auto mt-10 px-4">
       <h1 className="text-2xl font-bold mb-4 text-blue-600">Pokémon Sightings</h1>
-
-      {/* 🆕 Formulário de criação */}
-      <CreateSightedForm onCreated={fetchSightings} />
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
