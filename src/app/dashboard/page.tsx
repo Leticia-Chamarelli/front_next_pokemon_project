@@ -1,4 +1,3 @@
-
 "use client";
 
 import { PrivateRoute } from "@/components/PrivateRoute";
@@ -9,6 +8,7 @@ import DashboardCard from "@/components/ui/DashboardCard";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/shared/LogoutButton";
 import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
+import Link from "next/link";
 
 export default function DashboardPage() {
   const { user, mounted } = useAuth();
@@ -23,11 +23,11 @@ export default function DashboardPage() {
   }
 
   const handleRegisterCapture = () => {
-    router.push("/captured/create");
+    router.push("/captured");
   };
 
   const handleReportSighting = () => {
-    router.push("/sighted/create");
+    router.push("/sighted");
   };
 
   const handleViewCaptures = () => {
@@ -41,14 +41,11 @@ export default function DashboardPage() {
   return (
     <PrivateRoute>
       <BackgroundWrapper>
-        {/* Logout button positioned absolutely at the top right */}
         <div className="absolute top-4 right-4 z-50">
           <LogoutButton />
         </div>
 
-        {/* Main content area */}
         <div className="relative z-10 max-w-4xl mx-auto w-full text-center flex flex-col justify-between min-h-screen px-4 py-4">
-          {/* Welcome message */}
           <div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mt-4 md:mt-8">
               Welcome back, <span className="text-red-600">{user?.username || 'Trainer'}</span>!
@@ -58,12 +55,10 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* Pokéball icon centered */}
           <div className="flex justify-center mb-6">
             <PokeballIcon size="medium" />
           </div>
 
-          {/* Action cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <DashboardCard
               icon={<span className="text-white text-2xl">➕</span>}
@@ -83,7 +78,6 @@ export default function DashboardPage() {
             />
           </div>
 
-          {/* Navigation buttons */}
           <div className="flex flex-col md:flex-row justify-center gap-2 mb-4">
             <Button
               onClick={handleViewCaptures}
