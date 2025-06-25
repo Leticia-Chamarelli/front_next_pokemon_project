@@ -47,8 +47,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Main content area */}
-        <div className="relative z-10 max-w-4xl mx-auto w-full text-center flex flex-col justify-center min-h-[calc(100vh-64px)] pt-4 pb-8 px-4">
-          <div className="flex-shrink-0 mb-4">
+        <div className="relative z-10 max-w-4xl mx-auto w-full text-center flex flex-col justify-between min-h-screen px-4 py-4">
+          {/* Welcome message */}
+          <div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mt-4 md:mt-8">
               Welcome back, <span className="text-red-600">{user?.username || 'Trainer'}</span>!
             </h1>
@@ -57,11 +58,13 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex justify-center flex-shrink-0 mb-6">
+          {/* Pokéball icon centered */}
+          <div className="flex justify-center mb-6">
             <PokeballIcon size="medium" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-shrink-0 mb-4">
+          {/* Action cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <DashboardCard
               icon={<span className="text-white text-2xl">➕</span>}
               title="Register Capture"
@@ -80,7 +83,8 @@ export default function DashboardPage() {
             />
           </div>
 
-          <div className="flex flex-col md:flex-row justify-center gap-2 flex-shrink-0 mb-4">
+          {/* Navigation buttons */}
+          <div className="flex flex-col md:flex-row justify-center gap-2 mb-4">
             <Button
               onClick={handleViewCaptures}
               className="bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 py-2 px-4 rounded-lg text-base font-semibold transition-all duration-300 shadow-sm"
@@ -93,13 +97,6 @@ export default function DashboardPage() {
             >
               View Sightings
             </Button>
-          </div>
-
-          <div className="flex flex-col items-center justify-center flex-shrink-0 py-4">
-            <p className="text-base text-gray-600 italic font-medium mb-2">
-              Ready to catch them all?
-            </p>
-            <PokeballIcon size="small" />
           </div>
         </div>
       </BackgroundWrapper>
