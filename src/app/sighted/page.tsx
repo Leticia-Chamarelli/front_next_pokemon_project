@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
+import BackButton from "@/components/ui/BackButton";
 
 interface SightedPokemon {
   id: number;
@@ -80,28 +82,32 @@ export default function SightedPage() {
   }, [accessToken]);
 
   return (
-    <main className="max-w-4xl mx-auto mt-10 px-4">
-      <h1 className="text-2xl font-bold mb-4 text-blue-600">Pokémon Sightings</h1>
+    <BackgroundWrapper>
+      <main className="max-w-4xl mx-auto mt-10 px-4">
+        <BackButton to="/dashboard" label="Dashboard" />
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      {!loading && sightings.length === 0 && <p>No sightings found.</p>}
+        <h1 className="text-2xl font-bold mb-4 text-blue-600">Pokémon Sightings</h1>
 
-      <ul className="space-y-4">
-        {sightings.map((s) => (
-          <li key={s.id} className="p-4 bg-white rounded shadow border">
-            <p>
-              <strong>Pokémon:</strong> {s.pokemonName} (ID: {s.pokemonId})
-            </p>
-            <p>
-              <strong>Region:</strong> {s.region}
-            </p>
-            <p>
-              <strong>Date:</strong> {new Date(s.sightedAt).toLocaleString()}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </main>
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && sightings.length === 0 && <p>No sightings found.</p>}
+
+        <ul className="space-y-4">
+          {sightings.map((s) => (
+            <li key={s.id} className="p-4 bg-white rounded shadow border">
+              <p>
+                <strong>Pokémon:</strong> {s.pokemonName} (ID: {s.pokemonId})
+              </p>
+              <p>
+                <strong>Region:</strong> {s.region}
+              </p>
+              <p>
+                <strong>Date:</strong> {new Date(s.sightedAt).toLocaleString()}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </main>
+    </BackgroundWrapper>
   );
 }

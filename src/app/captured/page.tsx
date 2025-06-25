@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
+import BackButton from "@/components/ui/BackButton";
 
 interface CapturedPokemon {
   id: number;
@@ -75,28 +77,32 @@ export default function CapturedPage() {
   }, [accessToken]);
 
   return (
-    <main className="max-w-4xl mx-auto mt-10 px-4">
-      <h1 className="text-2xl font-bold mb-4 text-green-700">Pokémon Captures</h1>
+    <BackgroundWrapper>
+      <main className="max-w-4xl mx-auto mt-10 px-4">
+        <BackButton to="/dashboard" label="Dashboard" />
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      {!loading && captures.length === 0 && <p>No captures found.</p>}
+        <h1 className="text-2xl font-bold mb-4 text-green-700">Pokémon Captures</h1>
 
-      <ul className="space-y-4">
-        {captures.map((c) => (
-          <li key={c.id} className="p-4 bg-white rounded shadow border">
-            <p>
-              <strong>Pokémon:</strong> {c.pokemonName} (ID: {c.pokemonId})
-            </p>
-            <p>
-              <strong>Region:</strong> {c.region}
-            </p>
-            <p>
-              <strong>Date:</strong> {new Date(c.capturedAt).toLocaleString()}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </main>
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {!loading && captures.length === 0 && <p>No captures found.</p>}
+
+        <ul className="space-y-4">
+          {captures.map((c) => (
+            <li key={c.id} className="p-4 bg-white rounded shadow border">
+              <p>
+                <strong>Pokémon:</strong> {c.pokemonName} (ID: {c.pokemonId})
+              </p>
+              <p>
+                <strong>Region:</strong> {c.region}
+              </p>
+              <p>
+                <strong>Date:</strong> {new Date(c.capturedAt).toLocaleString()}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </main>
+    </BackgroundWrapper>
   );
 }
