@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
+import PokeballIcon from "@/components/ui/PokeballIcon";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -33,22 +35,10 @@ export default function LoginPage() {
     <BackgroundWrapper>
       {/* Wrapper for background */}
 
-      {/* Flexible central container */}
       <main className="flex flex-col items-center justify-center min-h-screen px-4">
-        {/* Pokéball icon above form, centered with margin */}
+        {/* Pokéball icon above form */}
         <div className="flex justify-center mb-8">
-          <div className="relative rounded-full overflow-hidden w-20 h-20 md:w-24 md:h-24 bg-gradient-to-b from-red-500 to-red-700 flex items-center justify-center shadow-2xl">
-            {/* Top red half */}
-            <div className="absolute top-0 overflow-hidden rounded-t-full w-full h-1/2 bg-gradient-to-b from-red-600 to-red-800"></div>
-            {/* Center black band */}
-            <div className="w-full h-3 bg-gray-900 absolute top-1/2 transform -translate-y-1/2 z-10"></div>
-            {/* Bottom white/gray half */}
-            <div className="absolute bottom-0 overflow-hidden rounded-b-full w-full h-1/2 bg-gradient-to-t from-gray-100 to-gray-300"></div>
-            {/* Central button with black core */}
-            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border-4 border-gray-900 flex items-center justify-center absolute z-20 shadow-lg">
-              <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-900"></div>
-            </div>
-          </div>
+          <PokeballIcon size="medium" />
         </div>
 
         {/* Form container */}
@@ -62,27 +52,37 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="username" className="block mb-1 font-semibold text-gray-700">
+              <label
+                htmlFor="username"
+                className="block mb-1 font-semibold text-gray-700"
+              >
                 Username
               </label>
               <Input
                 id="username"
                 type="text"
                 value={username}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUsername(e.target.value)
+                }
                 required
                 placeholder="your username"
               />
             </div>
             <div>
-              <label htmlFor="password" className="block mb-1 font-semibold text-gray-700">
+              <label
+                htmlFor="password"
+                className="block mb-1 font-semibold text-gray-700"
+              >
                 Password
               </label>
               <Input
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.target.value)
+                }
                 required
                 placeholder="********"
               />
@@ -102,7 +102,10 @@ export default function LoginPage() {
             {/* Link to registration */}
             <p className="text-sm mt-4 text-center text-gray-700">
               Don’t have an account?{" "}
-              <Link href="/register" className="text-red-600 hover:underline font-medium">
+              <Link
+                href="/register"
+                className="text-red-600 hover:underline font-medium"
+              >
                 Register
               </Link>
             </p>
