@@ -1,26 +1,26 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { AuthProvider } from "@/context/AuthContext";
+    import "./globals.css";
+    import { Inter } from "next/font/google";
+    import { AuthProvider } from "@/context/AuthContext";
 
-const inter = Inter({ subsets: ["latin"] });
+    const inter = Inter({ subsets: ["latin"] });
 
-export const metadata = {
-  title: "Pokémon App",
-  description: "A simple app to manage your Pokémon collection",
-};
+    export const metadata = {
+      title: "Pokémon App",
+      description: "A simple app to manage your Pokémon collection",
+    };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider>
-          <main>{children}</main> 
-        </AuthProvider>
-      </body>
-    </html>
-  );
-}
+    export default function RootLayout({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) {
+      return (
+        <html lang="en">
+          <body className={inter.className}>
+            <AuthProvider>
+              <main>{children}</main> 
+            </AuthProvider>
+          </body>
+        </html>
+      );
+    }
