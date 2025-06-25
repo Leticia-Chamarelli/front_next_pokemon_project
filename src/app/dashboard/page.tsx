@@ -47,10 +47,12 @@ export default function DashboardPage() {
         <div className="relative z-10 max-w-4xl mx-auto w-full text-center flex flex-col justify-between min-h-screen px-4 py-4">
           <div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mt-4 md:mt-8">
-              Welcome back, <span className="text-red-600">{user?.username || "Trainer"}</span>!
+              Welcome back,{" "}
+              <span className="text-red-600">{user?.username || "Trainer"}</span>!
             </h1>
             <p className="text-lg md:text-xl text-gray-700 mb-4 max-w-2xl mx-auto">
-              Ready to continue your Pokémon journey? Choose your next adventure below!
+              Ready to continue your Pokémon journey? Choose your next adventure
+              below!
             </p>
           </div>
 

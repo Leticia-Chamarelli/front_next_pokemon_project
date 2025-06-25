@@ -2,12 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { CreateCapturedForm } from "@/components/pokemon/captured/CreateCapturedForm";
 
 interface CapturedPokemon {
   id: number;
   pokemonId: number;
-  region: string; 
+  region: string;
   capturedAt: string;
 }
 
@@ -23,7 +22,6 @@ export default function CapturedPage() {
 
   async function fetchCaptures() {
     if (!accessToken) {
-      console.warn("Access token is missing!");
       setError("User not authenticated.");
       setLoading(false);
       return;
@@ -33,21 +31,15 @@ export default function CapturedPage() {
     setError("");
 
     try {
-      console.log("Fetching captures from:", `${process.env.NEXT_PUBLIC_BACKEND_URL}/captured`);
-      console.log("Using token:", accessToken);
-
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/captured`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      console.log("Response status:", res.status);
-
       if (!res.ok) {
         const errorText = await res.text();
-        console.error("Error response:", errorText);
-        throw new Error("Failed to fetch captures");
+        throw new Error(errorText || "Failed to fetch captures");
       }
 
       const data: CapturedPokemon[] = await res.json();
@@ -72,7 +64,6 @@ export default function CapturedPage() {
 
       setCaptures(extendedData);
     } catch (err: any) {
-      console.error("Fetch error:", err);
       setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -86,8 +77,6 @@ export default function CapturedPage() {
   return (
     <main className="max-w-4xl mx-auto mt-10 px-4">
       <h1 className="text-2xl font-bold mb-4 text-green-700">Pokémon Captures</h1>
-
-      <CreateCapturedForm onCreated={() => fetchCaptures()} />
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
