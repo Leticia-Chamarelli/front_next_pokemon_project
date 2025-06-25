@@ -41,7 +41,6 @@ export default function HeroSection() {
 
       <div className="flex justify-center gap-4">
         <Button onClick={() => router.push("/login")}>Start Your Journey</Button>
-        <Button variant="outline">Learn More</Button>
       </div>
     </section>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/shared/LogoutButton";
 import { useAuth } from "@/context/AuthContext";
 
@@ -17,15 +16,11 @@ export function Navbar() {
           PokémonApp
         </Link>
         <nav className="flex items-center gap-4">
-          {isAuthenticated && user ? (
+          {isAuthenticated && user && (
             <>
               <span className="mr-4 text-gray-700">Hi, {user.username}</span>
               <LogoutButton />
             </>
-          ) : (
-            <Link href="/login">
-              <Button variant="outline">Login</Button>
-            </Link>
           )}
         </nav>
       </div>

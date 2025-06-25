@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { Navbar } from "@/components/shared/navbar";
 import { AuthProvider } from "@/context/AuthContext";
+import { NavbarWrapper } from "@/components/shared/NavbarWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <Navbar />
+          <NavbarWrapper />
           <main className="max-w-5xl mx-auto px-4 py-6">{children}</main>
         </AuthProvider>
       </body>
