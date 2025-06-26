@@ -1,9 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Plus, Calendar, MapPin } from "lucide-react";
+
 import { useAuth } from "@/context/AuthContext";
 import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
 import BackButton from "@/components/ui/BackButton";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 
 interface SightedPokemon {
   id: number;
@@ -33,19 +44,15 @@ export default function SightedPage() {
     setError("");
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/sightings`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sightings`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
       if (!res.ok) {
         const errorText = await res.text();
-        console.error("Error response:", errorText);
-        throw new Error("Failed to fetch sightings");
+        throw new Error(errorText || "Failed to fetch sightings");
       }
 
       const data: SightedPokemon[] = await res.json();
@@ -57,12 +64,12 @@ export default function SightedPage() {
             const pokeData = await pokeRes.json();
             return {
               ...s,
-              pokemonName: pokeData.name,
+              pokemonName: pokeData.name.charAt(0).toUpperCase() + pokeData.name.slice(1),
             };
           } catch {
             return {
               ...s,
-              pokemonName: "unknown",
+              pokemonName: "Unknown",
             };
           }
         })
@@ -70,7 +77,6 @@ export default function SightedPage() {
 
       setSightings(extendedData);
     } catch (err: any) {
-      console.error("Fetch error:", err);
       setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -83,30 +89,86 @@ export default function SightedPage() {
 
   return (
     <BackgroundWrapper>
-      <main className="max-w-4xl mx-auto mt-10 px-4">
+      <main className="max-w-6xl mx-auto mt-10 px-4 relative z-10">
         <BackButton to="/dashboard" label="Dashboard" />
 
-        <h1 className="text-2xl font-bold mb-4 text-blue-600">Pokémon Sightings</h1>
+        <div className="mb-6 flex justify-end">
+          <Button
+            asChild
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          >
+            <Link href="/sighted/create">
+              <Plus className="w-4 h-4" />
+              Register New Sighting
+            </Link>
+          </Button>
+        </div>
 
-        {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        {!loading && sightings.length === 0 && <p>No sightings found.</p>}
+        <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-0">
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl font-bold text-gray-800 flex justify-center items-center gap-2 mx-auto">
+              <span>👁️</span> Pokémon Sightings
+            </CardTitle>
+            <CardDescription className="text-gray-600">
+              {sightings.length} Pokémon sighted in your area
+            </CardDescription>
+          </CardHeader>
 
-        <ul className="space-y-4">
-          {sightings.map((s) => (
-            <li key={s.id} className="p-4 bg-white rounded shadow border">
-              <p>
-                <strong>Pokémon:</strong> {s.pokemonName} (ID: {s.pokemonId})
-              </p>
-              <p>
-                <strong>Region:</strong> {s.region}
-              </p>
-              <p>
-                <strong>Date:</strong> {new Date(s.sightedAt).toLocaleString()}
-              </p>
-            </li>
-          ))}
-        </ul>
+          <CardContent>
+            {loading && <p>Loading...</p>}
+            {error && <p className="text-red-500">{error}</p>}
+
+            {!loading && sightings.length === 0 && (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">👁️</div>
+                <h3 className="text-lg font-medium text-gray-800 mb-2">No sightings found</h3>
+                <p className="text-gray-600 mb-6">Start by registering your first sighting!</p>
+                <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Link href="/sighted/create">Register First Sighting</Link>
+                </Button>
+              </div>
+            )}
+
+            {sightings.length > 0 && (
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-100 text-left text-gray-700 uppercase text-sm font-semibold">
+                    <th className="p-3 border-b">Pokémon</th>
+                    <th className="p-3 border-b">Region</th>
+                    <th className="p-3 border-b">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sightings.map((sighting) => (
+                    <tr key={sighting.id} className="hover:bg-gray-50 transition-colors cursor-default">
+                      <td className="p-3 border-b font-medium align-middle">
+                        {sighting.pokemonName} (#{sighting.pokemonId})
+                      </td>
+                      <td className="p-3 border-b align-middle">
+                        <div className="flex items-center gap-1 text-gray-600">
+                          <MapPin className="w-4 h-4 text-gray-500" />
+                          {sighting.region}
+                        </div>
+                      </td>
+                      <td className="p-3 border-b align-middle">
+                        <div className="flex items-center gap-1 text-gray-600">
+                          <Calendar className="w-4 h-4 text-gray-500" />
+                          {new Date(sighting.sightedAt).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </CardContent>
+        </Card>
       </main>
     </BackgroundWrapper>
   );
