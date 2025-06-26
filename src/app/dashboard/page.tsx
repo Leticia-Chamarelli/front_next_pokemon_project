@@ -8,6 +8,7 @@ import DashboardCard from "@/components/ui/DashboardCard";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/shared/LogoutButton";
 import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
+import { List } from "lucide-react";
 
 export default function DashboardPage() {
   const { user, mounted } = useAuth();
@@ -79,17 +80,22 @@ export default function DashboardPage() {
             />
           </div>
 
-          <div className="flex flex-col md:flex-row justify-center gap-2 mb-4">
+          {/* Quick access links - styled */}
+          <div className="grid md:grid-cols-2 gap-4 max-w-3xl mx-auto mb-8">
             <Button
+              variant="outline"
               onClick={handleViewCaptures}
-              className="bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 py-2 px-4 rounded-lg text-base font-semibold transition-all duration-300 shadow-sm"
+              className="w-full border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400"
             >
+              <List className="w-4 h-4 mr-2" />
               View My Captures
             </Button>
             <Button
+              variant="outline"
               onClick={handleViewSightings}
-              className="bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 py-2 px-4 rounded-lg text-base font-semibold transition-all duration-300 shadow-sm"
+              className="w-full border-blue-300 text-blue-600 hover:bg-blue-50 hover:border-blue-400"
             >
+              <List className="w-4 h-4 mr-2" />
               View Sightings
             </Button>
           </div>
