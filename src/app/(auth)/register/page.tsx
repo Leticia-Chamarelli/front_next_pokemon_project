@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
 import BackButton from "@/components/ui/BackButton";
+import PokeballIcon from "@/components/ui/PokeballIcon";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -45,23 +46,14 @@ export default function RegisterPage() {
 
   return (
     <BackgroundWrapper>
-      <main className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden max-w-md mx-auto">
-        <div className="w-full mt-4">
+      <main className="min-h-screen flex flex-col items-center justify-start px-4 relative overflow-hidden max-w-md mx-auto space-y-6 pt-6 pb-12">
+        <div className="w-full">
           <BackButton to="/login" />
         </div>
 
-        {/* Small Pokéball above the form */}
-        <div className="relative rounded-full overflow-hidden w-20 h-20 md:w-24 md:h-24 bg-gradient-to-b from-red-500 to-red-700 flex items-center justify-center shadow-2xl my-6 mx-auto">
-          {/* Top red half */}
-          <div className="absolute top-0 overflow-hidden rounded-t-full w-full h-1/2 bg-gradient-to-b from-red-600 to-red-800"></div>
-          {/* Center black band */}
-          <div className="w-full h-3 bg-gray-900 absolute top-1/2 transform -translate-y-1/2 z-10"></div>
-          {/* Bottom white/gray half */}
-          <div className="absolute bottom-0 overflow-hidden rounded-b-full w-full h-1/2 bg-gradient-to-t from-gray-100 to-gray-300"></div>
-          {/* Central button with black core */}
-          <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white border-4 border-gray-900 flex items-center justify-center absolute z-20 shadow-lg">
-            <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-900"></div>
-          </div>
+        {/* Pokéball Icon wrapper to keep aspect ratio */}
+        <div className="w-20 md:w-24 aspect-square flex-shrink-0 mx-auto">
+          <PokeballIcon size="medium" />
         </div>
 
         <div className="bg-white bg-opacity-90 rounded-2xl shadow-xl w-full p-8 pt-8">
