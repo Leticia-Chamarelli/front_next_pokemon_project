@@ -3,12 +3,30 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
+import {
+  Card,
+  CardContent,
+} from "@/components/ui/card";
+
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+
 interface PokemonOption {
   name: string;
   id: number;
 }
 
-const regions = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos", "Alola", "Galar"];
+const regions = [
+  "Kanto",
+  "Johto",
+  "Hoenn",
+  "Sinnoh",
+  "Unova",
+  "Kalos",
+  "Alola",
+  "Galar",
+];
 
 export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
   const { accessToken } = useAuth();
@@ -50,7 +68,6 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
     setMessage("");
 
     try {
-        console.log("Sending capture with token:", accessToken);
       const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/captured`, {
         method: "POST",
         headers: {
@@ -81,52 +98,69 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-8 p-4 border rounded bg-white shadow space-y-4">
-      <h2 className="text-xl font-semibold text-green-700">Report a Capture</h2>
+    <Card className="max-w-lg mx-auto">
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <Label htmlFor="pokemon-select" className="mb-1 block text-sm font-medium">
+              Pokémon
+            </Label>
+            <Select
+              id="pokemon-select"
+              value={pokemonId === "" ? "" : String(pokemonId)}
+              onChange={(e) => setPokemonId(Number(e.target.value))}
+              disabled={loading}
+              required
+            >
+              <option value="">Select a Pokémon</option>
+              {pokemonList.map((p) => (
+                <option key={p.id} value={String(p.id)}>
+                  {p.name.charAt(0).toUpperCase() + p.name.slice(1)} (#{p.id})
+                </option>
+              ))}
+            </Select>
+          </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Pokémon</label>
-        <select
-          className="w-full p-2 border rounded"
-          value={pokemonId}
-          onChange={(e) => setPokemonId(Number(e.target.value))}
-          required
-        >
-          <option value="">Select a Pokémon</option>
-          {pokemonList.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name} (#{p.id})
-            </option>
-          ))}
-        </select>
-      </div>
+          <div>
+            <Label htmlFor="region-select" className="mb-1 block text-sm font-medium">
+              Region
+            </Label>
+            <Select
+              id="region-select"
+              value={region}
+              onChange={(e) => setRegion(e.target.value)}
+              disabled={loading}
+              required
+            >
+              <option value="">Select a region</option>
+              {regions.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </Select>
+          </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Region</label>
-        <select
-          className="w-full p-2 border rounded"
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
-          required
-        >
-          <option value="">Select a region</option>
-          {regions.map((r) => (
-            <option key={r} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
-      </div>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-red-600 hover:bg-red-700"
+          >
+            {loading ? "Submitting..." : "Submit Capture"}
+          </Button>
 
-      <button
-        type="submit"
-        className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
-        disabled={loading}
-      >
-        {loading ? "Submitting..." : "Submit Capture"}
-      </button>
-
-      {message && <p className="text-sm mt-2 text-green-700">{message}</p>}
-    </form>
+          {message && (
+            <p
+              className={`mt-2 text-center text-sm ${
+                message.includes("successfully") ? "text-green-700" : "text-red-600"
+              }`}
+              role="alert"
+            >
+              {message}
+            </p>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   );
 }
