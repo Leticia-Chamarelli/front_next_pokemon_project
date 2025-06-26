@@ -130,36 +130,38 @@ export default function SightedPage() {
             )}
 
             {sightings.length > 0 && (
-              <table className="w-full border-collapse">
+              <table className="w-full border-collapse table-fixed">
                 <thead>
                   <tr className="bg-gray-100 text-left text-gray-700 uppercase text-sm font-semibold">
-                    <th className="p-3 border-b">Pokémon</th>
-                    <th className="p-3 border-b">Region</th>
-                    <th className="p-3 border-b">Date</th>
+                    <th className="p-3 border-b w-1/3">Pokémon</th>
+                    <th className="p-3 border-b w-1/3">Region</th>
+                    <th className="p-3 border-b w-1/3">Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sightings.map((sighting) => (
                     <tr key={sighting.id} className="hover:bg-gray-50 transition-colors cursor-default">
-                      <td className="p-3 border-b font-medium align-middle">
+                      <td className="p-3 border-b font-medium align-middle truncate max-w-xs">
                         {sighting.pokemonName} (#{sighting.pokemonId})
                       </td>
                       <td className="p-3 border-b align-middle">
-                        <div className="flex items-center gap-1 text-gray-600">
-                          <MapPin className="w-4 h-4 text-gray-500" />
-                          {sighting.region}
+                        <div className="flex items-center gap-2 text-gray-600 truncate max-w-xs">
+                          <MapPin className="w-5 h-5 text-gray-500" />
+                          <span>{sighting.region}</span>
                         </div>
                       </td>
                       <td className="p-3 border-b align-middle">
-                        <div className="flex items-center gap-1 text-gray-600">
-                          <Calendar className="w-4 h-4 text-gray-500" />
-                          {new Date(sighting.sightedAt).toLocaleDateString("pt-BR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Calendar className="w-5 h-5 text-gray-500" />
+                          <span>
+                            {new Date(sighting.sightedAt).toLocaleDateString("pt-BR", {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
                         </div>
                       </td>
                     </tr>
