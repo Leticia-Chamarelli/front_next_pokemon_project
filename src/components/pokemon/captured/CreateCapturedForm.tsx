@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 interface PokemonOption {
@@ -105,7 +104,7 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
             <Label htmlFor="pokemon-select" className="mb-1 block text-sm font-medium">
               Pokémon
             </Label>
-            <Select
+            <select
               id="pokemon-select"
               value={pokemonId === "" ? "" : String(pokemonId)}
               onChange={(e) => setPokemonId(Number(e.target.value))}
@@ -113,6 +112,7 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
               onInput={(e) => e.currentTarget.setCustomValidity("")}
               disabled={loading}
               required
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             >
               <option value="">Select a Pokémon</option>
               {pokemonList.map((p) => (
@@ -120,14 +120,14 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
                   {p.name.charAt(0).toUpperCase() + p.name.slice(1)} (#{p.id})
                 </option>
               ))}
-            </Select>
+            </select>
           </div>
 
           <div>
             <Label htmlFor="region-select" className="mb-1 block text-sm font-medium">
               Region
             </Label>
-            <Select
+            <select
               id="region-select"
               value={region}
               onChange={(e) => setRegion(e.target.value)}
@@ -135,6 +135,7 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
               onInput={(e) => e.currentTarget.setCustomValidity("")}
               disabled={loading}
               required
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
             >
               <option value="">Select a region</option>
               {regions.map((r) => (
@@ -142,7 +143,7 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
                   {r}
                 </option>
               ))}
-            </Select>
+            </select>
           </div>
 
           <div>
@@ -161,7 +162,7 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
               onInput={(e) => e.currentTarget.setCustomValidity("")}
               inputMode="numeric"
               pattern="\d*"
-              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Enter level"
               disabled={loading}
               required
@@ -177,7 +178,7 @@ export function CreateCapturedForm({ onCreated }: { onCreated?: () => void }) {
               id="nickname"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               placeholder="Enter nickname"
               disabled={loading}
             />

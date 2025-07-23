@@ -11,6 +11,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface PokemonOption {
   name: string;
@@ -18,7 +19,15 @@ interface PokemonOption {
 }
 
 const regions = [
-  "Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos", "Alola", "Galar", "Paldea"
+  "Kanto",
+  "Johto",
+  "Hoenn",
+  "Sinnoh",
+  "Unova",
+  "Kalos",
+  "Alola",
+  "Galar",
+  "Paldea",
 ];
 
 export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
@@ -27,7 +36,7 @@ export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
   const [pokemonList, setPokemonList] = useState<PokemonOption[]>([]);
   const [pokemonId, setPokemonId] = useState<number | "">("");
   const [region, setRegion] = useState("");
-  const [level, setLevel] = useState("");
+  const [level, setLevel] = useState<number | "">("");
   const [nickname, setNickname] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -37,10 +46,12 @@ export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
       try {
         const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
         const data = await res.json();
+
         const list = data.results.map((pokemon: { name: string; url: string }) => {
           const id = Number(pokemon.url.split("/").filter(Boolean).pop());
           return { name: pokemon.name, id };
         });
+
         setPokemonList(list);
       } catch (err) {
         console.error("Error fetching Pokémons", err);
@@ -53,7 +64,7 @@ export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!accessToken || !pokemonId || !region || !level) {
-      setMessage("Please fill all fields.");
+      setMessage("Please fill all required fields.");
       return;
     }
 
@@ -70,13 +81,15 @@ export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
         body: JSON.stringify({
           pokemonId,
           region,
-          level: Number(level),
-          nickname: nickname.trim() || null,
+          level,
+          nickname: nickname || null,
           sightedAt: new Date().toISOString(),
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to create sighting.");
+      if (!res.ok) {
+        throw new Error("Failed to create sighting.");
+      }
 
       setMessage("Sighting created successfully!");
       setPokemonId("");
@@ -96,19 +109,17 @@ export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
     <Card className="max-w-lg mx-auto">
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Pokémon */}
           <div>
-            <Label htmlFor="pokemon-select">Pokémon</Label>
+            <Label htmlFor="pokemon-select" className="mb-1 block text-sm font-medium">
+              Pokémon
+            </Label>
             <Select
               id="pokemon-select"
               value={pokemonId === "" ? "" : String(pokemonId)}
               onChange={(e) => setPokemonId(Number(e.target.value))}
-              onInvalid={(e) =>
-                e.currentTarget.setCustomValidity("Please select a Pokémon.")
-              }
-              onInput={(e) => e.currentTarget.setCustomValidity("")}
               disabled={loading}
               required
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select a Pokémon</option>
               {pokemonList.map((p) => (
@@ -119,19 +130,17 @@ export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
             </Select>
           </div>
 
-          {/* Region */}
           <div>
-            <Label htmlFor="region-select">Region</Label>
+            <Label htmlFor="region-select" className="mb-1 block text-sm font-medium">
+              Region
+            </Label>
             <Select
               id="region-select"
               value={region}
               onChange={(e) => setRegion(e.target.value)}
-              onInvalid={(e) =>
-                e.currentTarget.setCustomValidity("Please select a region.")
-              }
-              onInput={(e) => e.currentTarget.setCustomValidity("")}
               disabled={loading}
               required
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select a region</option>
               {regions.map((r) => (
@@ -142,47 +151,39 @@ export function CreateSightedForm({ onCreated }: { onCreated?: () => void }) {
             </Select>
           </div>
 
-          {/* Level */}
           <div>
-            <Label htmlFor="level">Level</Label>
-            <input
-              type="text"
+            <Label htmlFor="level" className="mb-1 block text-sm font-medium">
+              Level
+            </Label>
+            <Input
               id="level"
+              type="number"
+              min={1}
+              max={100}
               value={level}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (/^\d*$/.test(val)) {
-                  setLevel(val);
-                }
-              }}
-              onInvalid={(e) =>
-                e.currentTarget.setCustomValidity("Please enter a level.")
-              }
-              onInput={(e) => e.currentTarget.setCustomValidity("")}
-              inputMode="numeric"
-              pattern="\d*"
-              placeholder="Enter level"
-              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setLevel(Number(e.target.value))}
               disabled={loading}
               required
+              placeholder="Enter level"
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
-          {/* Nickname */}
           <div>
-            <Label htmlFor="nickname">Nickname (optional)</Label>
-            <input
-              type="text"
+            <Label htmlFor="nickname" className="mb-1 block text-sm font-medium">
+              Nickname (optional)
+            </Label>
+            <Input
               id="nickname"
+              type="text"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
-              placeholder="Enter nickname"
-              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm"
               disabled={loading}
+              placeholder="Enter nickname"
+              className="w-full rounded-md border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
-          {/* Submit */}
           <Button
             type="submit"
             disabled={loading}
