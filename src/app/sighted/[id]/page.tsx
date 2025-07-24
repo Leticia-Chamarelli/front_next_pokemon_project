@@ -1,28 +1,79 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+
 import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
 import BackButton from "@/components/ui/BackButton";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface PokemonDetailProps {
-  params: {
-    id: string;
-  };
+interface Pokemon {
+  id: number;
+  name: string;
+  spriteUrl: string;
+  level: number;
+  nickname?: string;
+  region: string;
+  date: string;
+  types?: string[];
+  abilities?: string[];
+  height: number;
+  weight: number;
+  base_experience: number;
 }
 
-async function getSightedPokemonById(id: string) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/sighted/${id}`,
-    { cache: "no-store" }
-  );
+export default function SightedDetailPage() {
+  const { id } = useParams();
+  const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch sighted Pokémon");
+  useEffect(() => {
+    async function fetchPokemon() {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("You are not authenticated.");
+          setLoading(false);
+          return;
+        }
+
+        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3000";
+        const res = await fetch(`${baseUrl}/sightings/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch sighted Pokémon.");
+        const data = await res.json();
+        setPokemon(data);
+      } catch (err) {
+        console.error("Failed to fetch Pokémon:", err);
+        setError("Failed to load Pokémon data.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (id) fetchPokemon();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <BackgroundWrapper>
+        <div className="p-6 text-center text-gray-500">Loading Pokémon data...</div>
+      </BackgroundWrapper>
+    );
   }
 
-  return res.json();
-}
-
-export default async function SightedDetailPage({ params }: PokemonDetailProps) {
-  const pokemon = await getSightedPokemonById(params.id);
+  if (error || !pokemon) {
+    return (
+      <BackgroundWrapper>
+        <div className="p-6 text-center text-red-500">{error || "Pokémon not found."}</div>
+      </BackgroundWrapper>
+    );
+  }
 
   return (
     <BackgroundWrapper>
@@ -46,26 +97,26 @@ export default async function SightedDetailPage({ params }: PokemonDetailProps) 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p><strong>Level:</strong> {pokemon.level}</p>
-                <p><strong>Nickname:</strong> {pokemon.nickname || "Nenhum"}</p>
-                <p><strong>Região:</strong> {pokemon.region}</p>
-                <p><strong>Data:</strong> {new Date(pokemon.date).toLocaleDateString("pt-BR")}</p>
+                <p><strong>Nickname:</strong> {pokemon.nickname || "No nickname"}</p>
+                <p><strong>Region:</strong> {pokemon.region}</p>
+                <p><strong>Date:</strong> {new Date(pokemon.date).toLocaleDateString("en-GB")}</p>
               </div>
               <div>
-                <p><strong>Tipos:</strong> {pokemon.types?.join(", ")}</p>
-                <p><strong>Habilidades:</strong> {pokemon.abilities?.join(", ")}</p>
-                <p><strong>Altura:</strong> {pokemon.height} m</p>
-                <p><strong>Peso:</strong> {pokemon.weight} kg</p>
+                <p><strong>Types:</strong> {pokemon.types?.join(", ") || "Unknown"}</p>
+                <p><strong>Abilities:</strong> {pokemon.abilities?.join(", ") || "Unknown"}</p>
+                <p><strong>Height:</strong> {pokemon.height} m</p>
+                <p><strong>Weight:</strong> {pokemon.weight} kg</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <p><strong>Experiência Base:</strong> {pokemon.base_experience}</p>
+                <p><strong>Base Experience:</strong> {pokemon.base_experience}</p>
               </div>
               <div>
                 <img
                   src={`/regions/${pokemon.region}.png`}
-                  alt={`Região de ${pokemon.region}`}
+                  alt={`Region: ${pokemon.region}`}
                   className="w-full max-w-xs rounded-lg shadow-md"
                 />
               </div>
