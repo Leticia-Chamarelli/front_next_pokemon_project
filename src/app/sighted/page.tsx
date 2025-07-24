@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Calendar, MapPin } from "lucide-react";
 
 import { useAuth } from "@/context/AuthContext";
@@ -28,6 +29,7 @@ interface ExtendedSightedPokemon extends SightedPokemon {
 }
 
 export default function SightedPage() {
+  const router = useRouter();
   const { accessToken } = useAuth();
   const [sightings, setSightings] = useState<ExtendedSightedPokemon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -140,7 +142,11 @@ export default function SightedPage() {
                 </thead>
                 <tbody>
                   {sightings.map((sighting) => (
-                    <tr key={sighting.id} className="hover:bg-gray-50 transition-colors cursor-default">
+                    <tr
+                      key={sighting.id}
+                      onClick={() => router.push(`/sighted/${sighting.id}`)}
+                      className="hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
                       <td className="p-3 border-b font-medium align-middle truncate max-w-xs">
                         {sighting.pokemonName} (#{sighting.pokemonId})
                       </td>

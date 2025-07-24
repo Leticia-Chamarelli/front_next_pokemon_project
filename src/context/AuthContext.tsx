@@ -21,7 +21,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://back-nest-pokemon-project.onrender.com";
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://back-nest-pokemon-project.onrender.com";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
