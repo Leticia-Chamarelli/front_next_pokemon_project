@@ -27,31 +27,42 @@ export default function SightedDetailPage() {
   useEffect(() => {
     async function fetchPokemon() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sighted/${id}`, {
+        const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/sighted/${id}`;
+        console.log("👉 Fetching:", url);
+
+        const res = await fetch(url, {
           credentials: "include",
         });
 
+        console.log("✅ Response status:", res.status);
+        const text = await res.text();
+        console.log("📦 Raw response body:", text);
+
         if (!res.ok) {
-          throw new Error("Failed to fetch sighted Pokémon details.");
+          throw new Error("❌ Failed to fetch sighted Pokémon details.");
         }
 
-        const data = await res.json();
+        const data = JSON.parse(text);
+        console.log("🎉 Parsed JSON:", data);
+
         setPokemon(data);
       } catch (err) {
         setError("An error occurred while loading the Pokémon details.");
-        console.error(err);
+        console.error("🧨 Fetch error:", err);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchPokemon();
+    if (id) {
+      fetchPokemon();
+    }
   }, [id]);
 
   return (
     <BackgroundWrapper>
       <div className="max-w-md mx-auto">
-        <BackButton to={""} />
+        <BackButton to="" />
         <h1 className="text-xl font-bold mb-4 text-center">Sighted Pokémon Details</h1>
 
         {loading && <p className="text-center">Loading...</p>}
@@ -76,7 +87,7 @@ export default function SightedDetailPage() {
                   <strong>Nickname:</strong> {pokemon.nickname}
                 </div>
               )}
-              {pokemon.level && (
+              {pokemon.level !== undefined && (
                 <div>
                   <strong>Level:</strong> {pokemon.level}
                 </div>
