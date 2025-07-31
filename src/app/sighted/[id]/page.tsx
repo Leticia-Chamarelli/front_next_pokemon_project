@@ -9,17 +9,13 @@ import { Card, CardContent } from "@/components/ui/card";
 
 interface Pokemon {
   id: number;
-  name: string;
-  spriteUrl: string;
-  level: number;
+  pokemonName: string;
   nickname?: string;
-  region: string;
-  date: string;
-  types?: string[];
-  abilities?: string[];
-  height: number;
-  weight: number;
-  base_experience: number;
+  level?: number;
+  regionName: string;
+  regionImageUrl?: string;
+  pokemonImageUrl?: string;
+  createdAt: string;
 }
 
 export default function SightedDetailPage() {
@@ -31,98 +27,78 @@ export default function SightedDetailPage() {
   useEffect(() => {
     async function fetchPokemon() {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("You are not authenticated.");
-          setLoading(false);
-          return;
-        }
-
-        const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:3000";
-        const res = await fetch(`${baseUrl}/sightings/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sighted/${id}`, {
+          credentials: "include",
         });
 
-        if (!res.ok) throw new Error("Failed to fetch sighted Pokémon.");
+        if (!res.ok) {
+          throw new Error("Failed to fetch sighted Pokémon details.");
+        }
+
         const data = await res.json();
         setPokemon(data);
       } catch (err) {
-        console.error("Failed to fetch Pokémon:", err);
-        setError("Failed to load Pokémon data.");
+        setError("An error occurred while loading the Pokémon details.");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     }
 
-    if (id) fetchPokemon();
+    fetchPokemon();
   }, [id]);
-
-  if (loading) {
-    return (
-      <BackgroundWrapper>
-        <div className="p-6 text-center text-gray-500">Loading Pokémon data...</div>
-      </BackgroundWrapper>
-    );
-  }
-
-  if (error || !pokemon) {
-    return (
-      <BackgroundWrapper>
-        <div className="p-6 text-center text-red-500">{error || "Pokémon not found."}</div>
-      </BackgroundWrapper>
-    );
-  }
 
   return (
     <BackgroundWrapper>
-      <div className="max-w-4xl mx-auto p-4 space-y-6">
-        <BackButton to="/sighted" />
+      <div className="max-w-md mx-auto">
+        <BackButton to={""} />
+        <h1 className="text-xl font-bold mb-4 text-center">Sighted Pokémon Details</h1>
 
-        <Card>
-          <CardContent className="p-6 space-y-4">
-            <div className="flex items-center space-x-4">
-              <img
-                src={pokemon.spriteUrl}
-                alt={pokemon.name}
-                className="w-24 h-24"
-              />
-              <div>
-                <h2 className="text-2xl font-bold capitalize">{pokemon.name}</h2>
-                <p className="text-sm text-gray-500">#{pokemon.id}</p>
-              </div>
-            </div>
+        {loading && <p className="text-center">Loading...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <p><strong>Level:</strong> {pokemon.level}</p>
-                <p><strong>Nickname:</strong> {pokemon.nickname || "No nickname"}</p>
-                <p><strong>Region:</strong> {pokemon.region}</p>
-                <p><strong>Date:</strong> {new Date(pokemon.date).toLocaleDateString("en-GB")}</p>
-              </div>
-              <div>
-                <p><strong>Types:</strong> {pokemon.types?.join(", ") || "Unknown"}</p>
-                <p><strong>Abilities:</strong> {pokemon.abilities?.join(", ") || "Unknown"}</p>
-                <p><strong>Height:</strong> {pokemon.height} m</p>
-                <p><strong>Weight:</strong> {pokemon.weight} kg</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <p><strong>Base Experience:</strong> {pokemon.base_experience}</p>
-              </div>
-              <div>
+        {pokemon && (
+          <Card>
+            <CardContent className="grid gap-4 p-4">
+              {pokemon.pokemonImageUrl && (
                 <img
-                  src={`/regions/${pokemon.region}.png`}
-                  alt={`Region: ${pokemon.region}`}
-                  className="w-full max-w-xs rounded-lg shadow-md"
+                  src={pokemon.pokemonImageUrl}
+                  alt={pokemon.pokemonName}
+                  className="w-32 h-32 object-contain mx-auto"
                 />
+              )}
+
+              <div>
+                <strong>Name:</strong> {pokemon.pokemonName}
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              {pokemon.nickname && (
+                <div>
+                  <strong>Nickname:</strong> {pokemon.nickname}
+                </div>
+              )}
+              {pokemon.level && (
+                <div>
+                  <strong>Level:</strong> {pokemon.level}
+                </div>
+              )}
+              <div>
+                <strong>Region:</strong> {pokemon.regionName}
+              </div>
+              <div>
+                <strong>Sighted at:</strong>{" "}
+                {new Date(pokemon.createdAt).toLocaleString()}
+              </div>
+
+              {pokemon.regionImageUrl && (
+                <img
+                  src={pokemon.regionImageUrl}
+                  alt={pokemon.regionName}
+                  className="w-full max-h-64 object-cover rounded-md"
+                />
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </BackgroundWrapper>
   );
