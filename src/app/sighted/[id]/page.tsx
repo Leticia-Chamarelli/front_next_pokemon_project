@@ -19,7 +19,7 @@ interface Pokemon {
 }
 
 export default function SightedDetailPage() {
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export default function SightedDetailPage() {
   useEffect(() => {
     async function fetchPokemon() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sighted/${id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sighted/${id}`, {
           credentials: "include",
         });
 

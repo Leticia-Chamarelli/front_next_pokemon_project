@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Plus, Calendar, MapPin } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/context/AuthContext";
 import BackgroundWrapper from "@/components/ui/BackgroundWrapper";
